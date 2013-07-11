@@ -1,0 +1,9 @@
+{
+    "name": "Load of War",
+    "version": "0.0.1",
+
+    "mysql": {
+        "dsn": "root:123456@(192.168.11.50:3306)",
+        "dbname": "roy_dev"
+    }
+}
