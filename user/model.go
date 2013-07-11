@@ -27,14 +27,13 @@ func Find(id int64) (*Entity, bool) {
         return user, true
     }
 
-    user = new(Entity)
+    user = New()
     sql := fmt.Sprintf("select id,name,email,passwd,salt,created_at from `"+
             Table +"` where `id`=%d", id)
     e := mysql.DB().QueryRow(sql).Scan(&user.id, &user.name, &user.email,
             &user.passwd, &user.salt, &user.created_at)
 
     if e != nil {
-        log.Fatal(e)
         return user, false
     }
 
@@ -79,7 +78,7 @@ func HashPasswd(passwd string, salt string) string {
     hash := sha512.New()
 
     if _, e := hash.Write([]byte(passwd + salt)); e != nil {
-        log.Fatal(e)
+        log.Println(e)
         return ""
     }
 

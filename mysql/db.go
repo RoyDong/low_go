@@ -34,7 +34,6 @@ func Insert(table string, data map[string]string) int64 {
             strings.Join(values, ",") + ")"
 
     result, e := DB().Exec(sql)
-    log.Println(sql)
 
     if e != nil {
         log.Fatal(e)
@@ -59,11 +58,10 @@ func Update(table string, data map[string]string, condition string) bool {
         i++
     }
 
-    sql := "update `" + table + "` set " + strings.Join(parts, ",") + 
+    sql := "update `" + table + "` set " + strings.Join(parts, ",") +
             " where " + condition
 
     _, e:= DB().Exec(sql)
-    log.Println(sql)
 
     if e != nil {
         log.Fatal(e)

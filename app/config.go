@@ -7,7 +7,7 @@ import (
 )
 
 const (
-    ConfigFile = "config/config.json"
+    ConfigPath = "config/"
 )
 
 /*
@@ -29,8 +29,8 @@ type config struct {
 */
 var Config = new(config)
 
-func LoadConfig() {
-    file, e := os.Open(ConfigFile)
+func LoadConfig(name string) {
+    file, e := os.Open(ConfigPath + name + ".json")
 
     if e != nil {
         log.Fatal(e)
