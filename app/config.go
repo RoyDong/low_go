@@ -7,7 +7,7 @@ import (
 )
 
 const (
-    ConfigPath = "config/"
+    ConfigFile = "config/app.json"
 )
 
 /*
@@ -21,6 +21,7 @@ type mysql struct {
 type config struct {
     Name string `json:"name"`
     Version string `json:"version"`
+    Port int `json:"port"`
     Mysql mysql `json:"mysql"`
 }
 
@@ -29,19 +30,18 @@ type config struct {
 */
 var Config = new(config)
 
-func LoadConfig(name string) {
-    file, e := os.Open(ConfigPath + name + ".json")
+func LoadConfig() {
+    file, e := os.Open(ConfigFile)
+    defer file.Close()
 
     if e != nil {
         log.Fatal(e)
-        return
     }
 
     fileInfo, e := file.Stat()
 
     if e != nil {
         log.Fatal(e)
-        return
     }
 
     stream := make([]byte, fileInfo.Size())

@@ -37,14 +37,12 @@ func Insert(table string, data map[string]string) int64 {
 
     if e != nil {
         log.Fatal(e)
-        return 0
     }
 
     id, e := result.LastInsertId()
 
     if e!= nil {
         log.Fatal(e)
-        return 0
     }
 
     return id
@@ -65,7 +63,6 @@ func Update(table string, data map[string]string, condition string) bool {
 
     if e != nil {
         log.Fatal(e)
-        return false
     }
 
     return true
@@ -76,7 +73,6 @@ func Delete(table string, condition string) bool {
 
     if e != nil {
         log.Fatal(e)
-        return false
     }
 
     return true
