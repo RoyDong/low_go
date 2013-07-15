@@ -2,17 +2,15 @@ package app
 
 import (
     "log"
+    "controller/user"
 )
 
-func exec(command string, data []byte) {
-    log.Println(command)
-    log.Println(string(data))
-    path := strings.Split(command, ".")
+func exec(command []string, data []byte) {
 
-    switch path[0] {
+    switch command[0] {
     case "user":
-        switch path[1] {
-        case "show": user.Show(data)
+        switch command[1] {
+        case "show": user.ShowAction(data)
         case "login":
 
         default:

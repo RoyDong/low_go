@@ -5,8 +5,9 @@ import (
     "fmt"
     "net"
     "time"
-    "encoding/binary"
     "bytes"
+    "strings"
+    "encoding/binary"
 )
 
 func Run() {
@@ -22,19 +23,22 @@ func Run() {
     for {
         conn, e := listener.Accept()
 
-        if e != nil {
+        if e == nil {
+            go handle(conn)
+        }else{
             log.Println(e)
-            continue
         }
-
-        go handle(conn)
     }
 
     log.Println("Server shutdown")
 }
 
 func handle(conn net.Conn) {
-    log.Println(fmt.Sprintf("Client: %s(%s)",
+    log.Println(fmt.Sprintf("Client %s(%s) connected",
+            conn.RemoteAddr().Network(),
+            conn.RemoteAddr().String()))
+    defer conn.Close()
+    defer log.Println(fmt.Sprintf("Client %s(%s) disconnected",
             conn.RemoteAddr().Network(),
             conn.RemoteAddr().String()))
 
@@ -54,28 +58,35 @@ func handle(conn net.Conn) {
         log.Println(startTime)
 
         if netlag < 0 || netlag > 30 {
-            log.Println("Command timeout")
+            log.Println("Expired command")
             continue
         }
 
         length, _ = binary.ReadVarint(bytes.NewBuffer(head[8:15]))
-        command := make([]byte, length)
-        _, e = conn.Read(command)
+        stream := make([]byte, length)
+        _, e = conn.Read(stream)
 
         if e != nil {
             log.Println(e)
+            continue
+        }
+
+        command := strings.Split(string(stream), ".")
+
+        if len(command) < 2 {
+            log.Println("Error command:" + command)
             continue
         }
 
         length, _ = binary.ReadVarint(bytes.NewBuffer(head[16:24]))
-        body := make([]byte, length)
-        _, e = conn.Read(body)
+        stream = make([]byte, length)
+        _, e = conn.Read(stream)
 
         if e != nil {
             log.Println(e)
             continue
         }
 
-        exec(string(command), body)
+        exec(command, stream)
     }
 }
