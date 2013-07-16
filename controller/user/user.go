@@ -1,6 +1,11 @@
-package controller/user
+package user
 
 
-func Show(data []byte) {
+import (
+    "log"
+    "low/server"
+)
 
+func Show(m *server.Message) {
+    log.Println(m.Command())
 }
