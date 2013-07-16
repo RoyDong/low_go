@@ -10,12 +10,6 @@ import (
     "encoding/json"
 )
 
-type Session struct {
-    listener net.Listener
-    conn net.Conn
-    startTime int64
-}
-
 func Start(port int) {
     listener, e := net.Listen("tcp", fmt.Sprintf(":%d", port))
     defer listener.Close()
@@ -42,6 +36,12 @@ func Start(port int) {
     }
 
     log.Println("Server shutdown")
+}
+
+type Session struct {
+    listener net.Listener
+    conn net.Conn
+    startTime int64
 }
 
 func (s *Session)Close() {
