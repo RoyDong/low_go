@@ -14,13 +14,13 @@ const (
     SaltLen = 32
 )
 
-var entities = make(map[int64]*Entity)
+var entities = make(map[int64]*User)
 
-func New() *Entity {
-    return new(Entity).SetCreatedAt(time.Now().Unix())
+func New() *User {
+    return new(User).SetCreatedAt(time.Now().Unix())
 }
 
-func Find(id int64) (*Entity, bool) {
+func Find(id int64) (*User, bool) {
     user, has := entities[id]
 
     if has {
@@ -41,7 +41,7 @@ func Find(id int64) (*Entity, bool) {
     return user, true
 }
 
-func Save(user *Entity) bool {
+func Save(user *User) bool {
     data := user.dataForMysql()
 
     if user.id > 0 {

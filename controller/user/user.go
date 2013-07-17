@@ -3,9 +3,16 @@ package user
 
 import (
     "log"
-    "low/server"
+    "low/app"
+    "low/user"
 )
 
-func Show(m *server.Message) {
-    log.Println(m.Command())
+func Show(m app.Message) {
+    id, _ := m.GetInt("id")
+
+
+    u, _ := user.Find(id)
+
+    log.Println(id)
+    m.SetReply(u.Json())
 }

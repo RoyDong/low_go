@@ -7,5 +7,5 @@ import (
 
 func main(){ 
     app.LoadConfig()
-    server.Start(app.Config.Port)
+    server.Listen(app.Config.Port)
 }

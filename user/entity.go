@@ -6,7 +6,7 @@ import (
     "strconv"
 )
 
-type Entity struct {
+type User struct {
     id int64
     name, email, passwd, salt string
     created_at int64
@@ -17,23 +17,23 @@ type Entity struct {
 setters
 
 */
-func (user *Entity) SetName(name string) *Entity {
+func (user *User) SetName(name string) *User {
     user.name = name
     return user
 }
 
-func (user *Entity) SetEmail(email string) *Entity {
+func (user *User) SetEmail(email string) *User {
     user.email = email
     return user
 }
 
-func (user *Entity) SetPasswd(passwd string) *Entity {
+func (user *User) SetPasswd(passwd string) *User {
     user.salt = app.RandString(SaltLen)
     user.passwd = HashPasswd(passwd, user.salt)
     return user
 }
 
-func (user *Entity) SetCreatedAt(sec int64) *Entity {
+func (user *User) SetCreatedAt(sec int64) *User {
     user.created_at = sec
     return user
 }
@@ -43,15 +43,15 @@ func (user *Entity) SetCreatedAt(sec int64) *Entity {
 getters
 
 */
-func (user *Entity) Id() int64 {
+func (user *User) Id() int64 {
     return user.id
 }
 
-func (user *Entity) Name() string {
+func (user *User) Name() string {
     return user.name
 }
 
-func (user *Entity) Email() string {
+func (user *User) Email() string {
     return user.email
 }
 
@@ -63,21 +63,21 @@ type DataForJson struct {
     CreatedAt int64 `json:"created_at"`
 }
 
-func (user *Entity) Json() string {
+func (user *User) Json() []byte {
     stream, _ := json.Marshal(&DataForJson{
         Id: user.id,
         Name: user.name,
         Email: user.email,
         CreatedAt: user.created_at,
     })
-    return string(stream)
+    return stream
 }
 
-func (user *Entity) CheckPasswd(passwd string) bool {
+func (user *User) CheckPasswd(passwd string) bool {
     return HashPasswd(passwd, user.salt) == user.passwd
 }
 
-func (user *Entity) dataForMysql() map[string]string {
+func (user *User) dataForMysql() map[string]string {
     return map[string]string{
         "name": user.name,
         "email": user.email,

@@ -2,28 +2,23 @@ package server
 
 import (
     "log"
-    "strings"
-    //"low/controller/user"
+    "low/controller/user"
 )
 
-func (m *Message)Handle() {
-    path := strings.Split(string(m.command), ".")
+func (m *Message)Dispatch() {
+    path := m.TitlePath()
 
-    log.Println(path[0])
-
-    /*
     switch path[0] {
     case "user":
 
         switch path[1] {
-        case "show": user.Show(m)
-        case "login":
+        case "show":user.Show(m)
 
         default:
-            log.Println("Command not found")
+            log.Println("no action")
         }
+
     default:
-        log.Println("Command not found")
+        log.Println("no action")
     }
-    */
 }
