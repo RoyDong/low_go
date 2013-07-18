@@ -27,11 +27,17 @@ func Find(id int64) (*User, bool) {
         return user, true
     }
 
-    user = New()
-    sql := fmt.Sprintf("select id,name,email,passwd,salt,created_at from `"+
-            Table +"` where `id`=%d", id)
+    user, has = FindBy("id", fmt.Sprintf("%d", id))
+    return user, has
+}
+
+func FindBy(k string, v string) (*User, bool) {
+    user := new(User)
+    sql := fmt.Sprintf("select id,name,email,passwd,salt,created_at from `" +
+            Table + "` where `%s`='%s'", k, v)
     e := mysql.DB().QueryRow(sql).Scan(&user.id, &user.name, &user.email,
             &user.passwd, &user.salt, &user.created_at)
+
 
     if e != nil {
         return user, false

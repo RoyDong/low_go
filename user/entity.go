@@ -63,6 +63,15 @@ type DataForJson struct {
     CreatedAt int64 `json:"created_at"`
 }
 
+func (user *User) Data() *DataForJson {
+    return &DataForJson{
+        Id: user.id,
+        Name: user.name,
+        Email: user.email,
+        CreatedAt: user.created_at,
+    }
+}
+
 func (user *User) Json() []byte {
     stream, _ := json.Marshal(&DataForJson{
         Id: user.id,

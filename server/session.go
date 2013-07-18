@@ -7,22 +7,31 @@ import (
     "time"
     "bytes"
     "encoding/binary"
+    "encoding/json"
     "low/app"
 )
 
 const (
     StateClose = 0
     StateOpen = 1
+    NoticeMid = byte(63)
 )
 
 type Session struct {
     listener net.Listener
     conn net.Conn
+    user app.User
     state int
     openAt time.Time
 }
 
-func (s *Session)Close() {
+type DataForJson struct {
+    Code int64 `json:"code"`
+    Message string `json:"message"`
+    Data interface{} `json:"data"`
+}
+
+func (s *Session) Close() {
     s.conn.Close()
     s.state = StateClose
     log.Println(fmt.Sprintf("Client %s(%s) disconnected",
@@ -30,7 +39,7 @@ func (s *Session)Close() {
             s.conn.RemoteAddr().String()))
 }
 
-func (s *Session)Open() {
+func (s *Session) Open() {
     conn := s.conn
     s.state = StateOpen
     log.Println(fmt.Sprintf("Client %s(%s) connected",
@@ -49,6 +58,7 @@ func (s *Session)Open() {
         }
 
         m := &Message{}
+        m.session = s
         m.id = head[0]
         binary.Read(bytes.NewBuffer(head[1:5]), binary.LittleEndian, &m.sentAt)
         binary.Read(bytes.NewBuffer(head[5:9]), binary.LittleEndian, &length)
@@ -92,12 +102,38 @@ func (s *Session)Open() {
     }
 }
 
-func (s *Session)Reply(m *Message) {
+func (s *Session) Reply(m app.Message) {
     buffer := new(bytes.Buffer)
-    binary.Write(buffer, binary.LittleEndian, m.id)
+    binary.Write(buffer, binary.LittleEndian, m.Id())
     binary.Write(buffer, binary.LittleEndian, int32(time.Now().Unix()))
-    binary.Write(buffer, binary.LittleEndian, int32(len(m.reply)))
-    binary.Write(buffer, binary.LittleEndian, m.reply)
+    binary.Write(buffer, binary.LittleEndian, int32(len(m.Reply())))
+    binary.Write(buffer, binary.LittleEndian, m.Reply())
+
+    s.conn.Write(buffer.Bytes())
+}
+
+func (s *Session) User() (app.User, bool) {
+    if s.user == nil {
+        return nil, false
+    }
+
+    return s.user, true
+}
+
+func (s *Session) SetUser(u app.User) {
+    s.user = u
+}
+
+func (s *Session) Notify(data interface{}) {
+    d, _ := json.Marshal(&DataForJson{
+        Code: 0, Message: "done", Data: data,
+    })
+
+    buffer := new(bytes.Buffer)
+    binary.Write(buffer, binary.LittleEndian, NoticeMid)
+    binary.Write(buffer, binary.LittleEndian, int32(time.Now().Unix()))
+    binary.Write(buffer, binary.LittleEndian, int32(len(d)))
+    binary.Write(buffer, binary.LittleEndian, d)
 
     s.conn.Write(buffer.Bytes())
 }

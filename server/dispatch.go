@@ -13,6 +13,7 @@ func (m *Message)Dispatch() {
 
         switch path[1] {
         case "show":user.Show(m)
+        case "signin":user.Signin(m)
 
         default:
             log.Println("no action")
