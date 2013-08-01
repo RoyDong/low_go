@@ -1,9 +1,11 @@
 package app
 
+import "net"
+
 type Session interface {
     Close()
     Open()
-    Reply(m Message)
+    Conn() net.Conn
     Notify(data interface{})
     User() (User, bool)
     SetUser(u User)
@@ -19,10 +21,11 @@ type Message interface {
     Reply() []byte
     Replied() bool
     Session() Session
-    SentAt() int32
+    SentAt() int64
 
     ReplySuccess(data interface{})
     ReplyError(code int64, message string)
+    Send()
     SetReply(r []byte)
 }
 

@@ -4,7 +4,10 @@ import (
     "strings"
     "low/app"
     "strconv"
+    "time"
+    "bytes"
     "encoding/json"
+    "encoding/binary"
 )
 
 type Message struct {
@@ -13,7 +16,8 @@ type Message struct {
     params map[string]string
     replied bool
     session app.Session
-    sentAt int32
+    sentAt int64
+    recvAt int64
 }
 
 func (m *Message) GetInt(k string) (int64, bool) {
@@ -62,7 +66,7 @@ func (m *Message) Session() app.Session {
     return m.session
 }
 
-func (m *Message) SentAt() int32 {
+func (m *Message) SentAt() int64 {
     return m.sentAt
 }
 
@@ -71,6 +75,7 @@ func (m *Message) ReplySuccess(data interface{}) {
         Code: 0, Message: "done", Data: data,
     })
     m.replied = true
+    m.Send()
 }
 
 func (m *Message) ReplyError(code int64, message string) {
@@ -78,9 +83,21 @@ func (m *Message) ReplyError(code int64, message string) {
         Code: code, Message: message, Data: nil,
     })
     m.replied = true
+    m.Send()
 }
 
 func (m *Message) SetReply(r []byte) {
     m.reply = r
     m.replied = true
+    m.Send()
+}
+
+func (m *Message) Send() {
+    buffer := new(bytes.Buffer)
+    binary.Write(buffer, binary.LittleEndian, m.id)
+    binary.Write(buffer, binary.LittleEndian, time.Now().UnixNano() / 1000000)
+    binary.Write(buffer, binary.LittleEndian, int32(len(m.reply)))
+    binary.Write(buffer, binary.LittleEndian, m.reply)
+
+    m.session.Conn().Write(buffer.Bytes())
 }

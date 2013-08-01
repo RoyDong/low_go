@@ -31,7 +31,7 @@ func Find(id int64) (*User, bool) {
     return user, has
 }
 
-func FindBy(k string, v string) (*User, bool) {
+func FindBy(k, v string) (*User, bool) {
     user := new(User)
     sql := fmt.Sprintf("select id,name,email,passwd,salt,created_at from `" +
             Table + "` where `%s`='%s'", k, v)

@@ -13,7 +13,7 @@ func Show(m app.Message) {
     u, _ := user.Find(id)
 
     log.Println(id)
-    m.SetReply(u.Json())
+    m.ReplySuccess(u.Data())
 }
 
 func Signin(m app.Message) {

@@ -1,8 +1,8 @@
 package server
 
 import (
-    "log"
     "low/controller/user"
+    "low/controller/scene"
 )
 
 func (m *Message)Dispatch() {
@@ -15,11 +15,13 @@ func (m *Message)Dispatch() {
         case "show":user.Show(m)
         case "signin":user.Signin(m)
 
-        default:
-            log.Println("no action")
         }
 
-    default:
-        log.Println("no action")
+    case "scene":
+        switch path[1] {
+        case "enter":scene.Enter(m)
+
+        }
+
     }
 }
