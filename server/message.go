@@ -30,6 +30,16 @@ func (m *Message) GetInt(k string) (int64, bool) {
     return 0, false
 }
 
+func (m *Message) GetFloat(k string) (float64, bool) {
+    if v, has := m.params[k]; has {
+        if f, e := strconv.ParseFloat(v, 64); e == nil {
+            return f, true
+        }
+    }
+
+    return 0, false
+}
+
 func (m *Message) Get(k string) (string, bool) {
     if v, has := m.params[k]; has {
         return v, true

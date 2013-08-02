@@ -4,7 +4,6 @@ package scene
 import (
     "low/app"
     "low/animation"
-    "strconv"
     "log"
 )
 
@@ -12,7 +11,7 @@ var s *animation.Sprite
 
 func Enter(m app.Message) {
 
-    scene := animation.CreateScene()
+    scene := new(animation.Scene)
 
     s = new(animation.Sprite)
 
@@ -25,12 +24,10 @@ func Enter(m app.Message) {
 }
 
 func Move(m app.Message) {
-    x, _ := m.Get("x")
-    y, _ := m.Get("y")
+    x, _ := m.GetFloat("x")
+    y, _ := m.GetFloat("y")
 
-    fx, _ := strconv.ParseFloat(x, 64)
-    fy, _ := strconv.ParseFloat(y, 64)
-    log.Println(x, fx) 
-    s.SetPosition(animation.Vector{X: fx, Y: fy,})
+    log.Println(x)
+    s.SetPosition(animation.Vector{X: x, Y: y,})
     m.ReplySuccess(nil)
 }

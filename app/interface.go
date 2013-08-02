@@ -32,5 +32,7 @@ type Message interface {
 type User interface {
     Id() int64
     Name() string
+    Session() (Session bool)
+    SetSession(s Session)
     Json() []byte
 }

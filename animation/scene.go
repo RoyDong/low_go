@@ -3,23 +3,20 @@ package animation
 import (
     "time"
     "log"
+    "low/app"
 )
 
 const (
-    FrameInterval = 500
+    FrameInterval = 100
+    CheckInterval = 1000
 )
 
 type Scene struct {
     lastFrameTime float64
+    lastCheckTime float64
     sprites []ISprite
     added []ISprite
-}
-
-func CreateScene() *Scene {
-    return &Scene{
-        sprites: make([]ISprite, 0),
-        added: make([]ISprite, 0),
-    }
+    users map[int64]app.User
 }
 
 func (s *Scene) AddSprite(sprite ISprite) {
@@ -53,7 +50,6 @@ func (s *Scene) perform(dt float64) {
         }
     }
 
-
     for _, sprite = range s.added {
         sprites = append(sprites, sprite)
     }
@@ -63,13 +59,33 @@ func (s *Scene) perform(dt float64) {
 }
 
 func (s *Scene) Start() {
-    s.lastFrameTime = float64(time.Now().UnixNano()) / 1000000000
+    s.lastCheckTime = s.lastFrameTime = float64(time.Now().UnixNano()) / 1000000000
 
     for t := range time.Tick(FrameInterval * time.Millisecond) {
         ft := float64(t.UnixNano()) / 1000000000
         s.perform(ft - s.lastFrameTime)
         s.lastFrameTime = ft
+
+        if ft - s.lastCheckTime >= CheckInterval {
+            if len(s.users) == 0 {
+                break
+            }
+
+            s.lastCheckTime = ft
+        }
     }
 
     log.Println("Scene close")
+}
+
+func (s *Scene) AddUser(u app.User) {
+    s.users[u.Id()] = u
+}
+
+func (s *Scene) RemoveUser(u app.User) {
+    delete(s.users, u.Id())
+}
+
+func (s *Scene) AddAction(a Action) {
+
 }

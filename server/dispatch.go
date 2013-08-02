@@ -20,6 +20,7 @@ func (m *Message)Dispatch() {
     case "scene":
         switch path[1] {
         case "enter":scene.Enter(m)
+        case "move":scene.Move(m)
 
         }
 

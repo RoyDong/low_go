@@ -118,6 +118,7 @@ func (s *Session) User() (app.User, bool) {
 
 func (s *Session) SetUser(u app.User) {
     s.user = u
+    u.SetSession(s)
 }
 
 func (s *Session) Notify(data interface{}) {
@@ -127,7 +128,7 @@ func (s *Session) Notify(data interface{}) {
 
     buffer := new(bytes.Buffer)
     binary.Write(buffer, binary.LittleEndian, NoticeMid)
-    binary.Write(buffer, binary.LittleEndian, time.Now().UnixNano()/1000000)
+    binary.Write(buffer, binary.LittleEndian, time.Now().UnixNano() / 1000000)
     binary.Write(buffer, binary.LittleEndian, int32(len(d)))
     binary.Write(buffer, binary.LittleEndian, d)
 

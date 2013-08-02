@@ -10,6 +10,7 @@ type User struct {
     id int64
     name, email, passwd, salt string
     created_at int64
+    session app.Session
 }
 
 /*
@@ -36,6 +37,18 @@ func (user *User) SetPasswd(passwd string) *User {
 func (user *User) SetCreatedAt(sec int64) *User {
     user.created_at = sec
     return user
+}
+
+func (user *User) Session() (app.Session, bool) {
+    if user.session == nil {
+        return nil, false
+    }
+
+    return user.session, true
+}
+
+func (user *User) SetSession(s app.Session) {
+    user.session = s
 }
 
 /*
