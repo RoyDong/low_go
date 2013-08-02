@@ -59,7 +59,8 @@ func (s *Scene) perform(dt float64) {
 }
 
 func (s *Scene) Start() {
-    s.lastCheckTime = s.lastFrameTime = float64(time.Now().UnixNano()) / 1000000000
+    s.lastFrameTime = float64(time.Now().UnixNano()) / 1000000000
+    s.lastCheckTime = s.lastFrameTime
 
     for t := range time.Tick(FrameInterval * time.Millisecond) {
         ft := float64(t.UnixNano()) / 1000000000
@@ -84,8 +85,4 @@ func (s *Scene) AddUser(u app.User) {
 
 func (s *Scene) RemoveUser(u app.User) {
     delete(s.users, u.Id())
-}
-
-func (s *Scene) AddAction(a Action) {
-
 }

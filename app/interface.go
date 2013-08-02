@@ -13,6 +13,7 @@ type Session interface {
 
 type Message interface {
     GetInt(k string) (int64, bool)
+    GetFloat(k string) (float64, bool)
     Get(k string) (string, bool)
     Id() byte
     Title() []byte
